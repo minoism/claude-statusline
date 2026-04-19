@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 
-const CLAUDE_DIR = path.join(os.homedir(), ".claude");
+const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), ".claude");
 const SETTINGS_FILE = path.join(CLAUDE_DIR, "settings.json");
 const STATUSLINE_DEST = path.join(CLAUDE_DIR, "statusline.sh");
 const STATUSLINE_SRC = path.resolve(__dirname, "statusline.sh");
@@ -146,13 +146,15 @@ function run() {
 
   const statusLineConfig = {
     type: "command",
-    command: 'bash "$HOME/.claude/statusline.sh"',
+    command: `bash "${STATUSLINE_DEST}"`,
+    padding: 0,
   };
 
   if (
     settings.statusLine &&
     settings.statusLine.type === "command" &&
-    settings.statusLine.command === statusLineConfig.command
+    settings.statusLine.command === statusLineConfig.command &&
+    settings.statusLine.padding === 0
   ) {
     success("Settings already configured");
   } else {
